@@ -1,0 +1,48 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+backend/venv/
+backend/db.sqlite3
+
+# Virtual environments
+.venv/
+venv/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes (local data)
+postgres_data/
+minio_data/
+
+# Package lock (root level, not needed)
+package-lock.json
+
+# Pyright config (IDE-specific)
+pyrightconfig.json
+
+# Gemini / Antigravity (AI tool artifacts)
+.gemini/
