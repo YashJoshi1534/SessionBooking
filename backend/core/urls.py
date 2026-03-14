@@ -18,8 +18,24 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+
+def api_root(request):
+    return JsonResponse({
+        'message': 'Sessions Marketplace API',
+        'endpoints': {
+            'users': '/api/users/',
+            'catalog': '/api/catalog/',
+            'bookings': '/api/bookings/',
+            'admin': '/admin/',
+        }
+    })
+
 
 urlpatterns = [
+    path('', api_root, name='api-root'),
+    path('api/', api_root, name='api-index'),
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/catalog/', include('catalog.urls')),
