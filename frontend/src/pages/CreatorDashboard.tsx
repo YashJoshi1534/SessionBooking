@@ -4,11 +4,12 @@ import api from '../lib/axios';
 import { Loader2, Plus, Users, Calendar, Clock, IndianRupee, Image as ImageIcon, Globe } from 'lucide-react';
 import { Session } from './Home';
 import DatePicker from 'react-datepicker';
-import TimezoneSelect, { ITimezone, ITimezoneOption } from 'react-timezone-select';
+import TimezoneSelect, { ITimezoneOption } from 'react-timezone-select';
 import dayjs from 'dayjs';
 import { toast } from 'sonner';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import ConfirmModal from '../components/ConfirmModal';
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,6 +37,7 @@ export default function CreatorDashboard() {
     Intl.DateTimeFormat().resolvedOptions().timeZone as any
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -221,16 +223,7 @@ export default function CreatorDashboard() {
                        </div>
                      </div>
                      <button 
-                        onClick={async () => {
-                           if (confirm('Are you sure you want to delete this session?')) {
-                              try {
-                                 await api.delete(`/catalog/sessions/${s.id}/`);
-                                 setSessions(sessions.filter(sess => sess.id !== s.id));
-                              } catch (e) {
-                                  toast.error('Failed to delete session');
-                              }
-                           }
-                        }}
+                        onClick={() => setDeleteTargetId(s.id)}
                         className="p-2 hover:bg-destructive/10 text-destructive/60 hover:text-destructive rounded-lg transition-colors"
                      >
                         <Plus className="w-5 h-5 rotate-45" />
@@ -267,6 +260,28 @@ export default function CreatorDashboard() {
 
         </div>
       </div>
+
+      <ConfirmModal
+        open={deleteTargetId !== null}
+        title="Delete Session"
+        message="Are you sure you want to delete this session? This action cannot be undone and any existing bookings will be affected."
+        confirmLabel="Delete"
+        cancelLabel="Keep it"
+        variant="danger"
+        onCancel={() => setDeleteTargetId(null)}
+        onConfirm={async () => {
+          if (deleteTargetId === null) return;
+          try {
+            await api.delete(`/catalog/sessions/${deleteTargetId}/`);
+            setSessions(sessions.filter(sess => sess.id !== deleteTargetId));
+            toast.success('Session deleted successfully');
+          } catch (e) {
+            toast.error('Failed to delete session');
+          } finally {
+            setDeleteTargetId(null);
+          }
+        }}
+      />
     </div>
   );
 }
